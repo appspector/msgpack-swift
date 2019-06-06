@@ -37,25 +37,24 @@ class ArrayDecodingState {
     }
 }
 
-class ExtensionCode {
-    func decode(bytes: Data, type: Int8) throws -> Any? {
-        return nil
-    }
-}
+let DefaultDecodingStackSize = 16
 
-public class MsgPackDecoder {
+public class Decoder {
     var decodingStack = Array<DecodingTask>()
     var headByte: uint8? = nil;
     var bufferReader = BufferReader()
-    var extensionCodec = ExtensionCode()
+    var extensionCodec = ExtensionCodec()
     
     init() {
-        self.decodingStack.reserveCapacity(16)
+        self.decodingStack.reserveCapacity(DefaultDecodingStackSize)
     }
     
     func decode(data: Data) throws -> Any? {
         bufferReader.setBuffer(data)
-        
+        return try decodeOne()
+    }
+    
+    func decodeOne() throws -> Any? {
         var object: Any? = nil
         
         DECODING: while true {
@@ -267,9 +266,9 @@ public class MsgPackDecoder {
             self.complete()
             
             while decodingStack.count > 0 {
-                let decodingState = decodingStack.last
+                let decodingTask = decodingStack.last
                 
-                switch decodingState {
+                switch decodingTask {
                 case .Array(let state):
                     if let object = object {
                         state.array.append(object)
@@ -315,6 +314,7 @@ public class MsgPackDecoder {
                 }
             }
             
+            // Object decoded
             break
         }
         
