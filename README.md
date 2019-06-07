@@ -11,7 +11,7 @@ This version is still in development
 
  - [x] Decoder
  - [x] Stream Decoder Helpers
- - [ ] Continious array stream decoder
+ - [x] Continious array stream decoder
  - [ ] Encoder
 
 # About Us
