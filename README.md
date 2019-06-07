@@ -10,7 +10,7 @@ This version is still in development
 # Progress
 
  - [x] Decoder
- - [ ] Stream Decoder Helpers
+ - [x] Stream Decoder Helpers
  - [ ] Continious array stream decoder
  - [ ] Encoder
 
