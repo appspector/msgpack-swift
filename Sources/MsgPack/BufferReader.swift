@@ -15,13 +15,9 @@ class BufferReader {
         self.buffer = data
     }
     
-    func appendBuffer(_ data: Data) {
-        if position == buffer.count {
-            self.buffer = data
-        } else {
-            self.buffer.append(data)
-        }
-    }
+    func append(data: Data) {
+        self.buffer.append(data)
+    }    
     
     func hasRemaining(_ size: Int) throws {
         if position + size > buffer.count {
@@ -78,6 +74,8 @@ class BufferReader {
             let stringBase = stringBytes.baseAddress!
             
             let string = String(validatingUTF8: stringBase)
+            
+            stringBytes.deallocate()
             
             if let string = string {
                 return string

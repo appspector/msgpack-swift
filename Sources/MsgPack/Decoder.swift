@@ -7,6 +7,8 @@ enum MsgPackDecodingError : Error {
     case invalidDecodingTask
     case unrecognizedType(type: UInt8)
     case failedToDecodeString
+    case extraBytesFound(bytesLeft: Int)
+    case invalidArrayHeaderType(type: UInt8)
 }
 
 enum DecodingTask {
@@ -38,6 +40,9 @@ class ArrayDecodingState {
 }
 
 let DefaultDecodingStackSize = 16
+let DefaultStreamChunkSize = 4096
+
+typealias ArrayDecodingCallback = (_ value: Any?, _ total: Int, _ read: Int) -> Void
 
 public class Decoder {
     var decodingStack = Array<DecodingTask>()
@@ -49,8 +54,59 @@ public class Decoder {
         self.decodingStack.reserveCapacity(DefaultDecodingStackSize)
     }
     
+    func decode(stream: InputStream, chunkSize: Int = DefaultStreamChunkSize) throws -> Any? {
+        var result: Any? = nil
+        
+        try consume(stream: stream, chunkSize: chunkSize) {
+            result = try decodeOne()
+        }
+        
+        return result
+    }
+    
+    func decodeArray(stream: InputStream, chunkSize: Int = DefaultStreamChunkSize, callback: ArrayDecodingCallback) throws -> Void {
+        var isArrayHeaderParsed = false
+        var totalElements = 0
+        var read = 0
+        
+        try consume(stream: stream, chunkSize: chunkSize) {
+            if !isArrayHeaderParsed {
+                totalElements = try readArraySize()
+                complete()
+                isArrayHeaderParsed = true
+            }
+            
+            while true {
+                let result = try decodeOne()
+                read += 1
+                callback(result, totalElements, read)
+            }
+        }
+    }
+    
+    private func consume(stream: InputStream, chunkSize: Int, callback: () throws -> Void) throws -> Void {
+        let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: chunkSize)
+        
+        while stream.hasBytesAvailable {
+            let read = stream.read(buffer, maxLength: chunkSize)
+            let data = Data(bytesNoCopy: buffer, count: read, deallocator: .none)
+            bufferReader.append(data: data)
+            
+            do {
+                try callback()
+            } catch MsgPackDecodingError.insufficientData {
+                // Do nothing
+            } catch {
+                throw error
+            }
+        }
+        
+        buffer.deallocate()
+        stream.close()
+    }
+    
     func decode(data: Data) throws -> Any? {
-        bufferReader.setBuffer(data)
+        bufferReader.setBuffer(data)    
         return try decodeOne()
     }
     
@@ -337,11 +393,28 @@ public class Decoder {
         self.complete()
     }
     
+    func readArraySize() throws -> Int {
+        let headByte = try readHeadByte()
+        
+        switch headByte {
+        case 0xdc:
+            return try Int(bufferReader.readU16())
+        case 0xdd:
+            return try Int(bufferReader.readU32())
+        default:
+            if headByte < 0xa0 {
+                return Int(headByte - 0x90)
+            } else {
+                throw MsgPackDecodingError.invalidArrayHeaderType(type: headByte)
+            }
+        }
+    }
+    
     func decodeExtension(_ size: Int, _ headOffset: Int) throws -> Any? {
         let extType: Int8 = try bufferReader.lookInteger(offset: headOffset)
         let data = try bufferReader.decodeBinary(size, headerSize: headOffset + 1)
         return try extensionCodec.decode(bytes: data, type: extType)
-    }
+    }    
     
     func readHeadByte() throws -> uint8 {
         if self.headByte == nil {

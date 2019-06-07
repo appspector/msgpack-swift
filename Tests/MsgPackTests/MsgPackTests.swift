@@ -93,10 +93,60 @@ final class MsgPackTests: XCTestCase {
         }
     }
     
+    func testStringArrayStream() throws {
+        
+        let expected = [
+            "a",
+            "aaaaaaaaaaaa",
+            "qpwdokqdpokqwdpoqwdkqpwodkqwpdokqwdpoqwkqpdwokqdwpooqkwdpoqwkd"
+        ]
+        
+        let input = Data([147, 161, 97, 172, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 217, 62, 113, 112, 119, 100, 111, 107, 113, 100, 112, 111, 107, 113, 119, 100, 112, 111, 113, 119, 100, 107, 113, 112, 119, 111, 100, 107, 113, 119, 112, 100, 111, 107, 113, 119, 100, 112, 111, 113, 119, 107, 113, 112, 100, 119, 111, 107, 113, 100, 119, 112, 111, 111, 113, 107, 119, 100, 112, 111, 113, 119, 107, 100])
+        
+        let decoder = Decoder()
+        
+        let stream = InputStream(data: input)
+        
+        stream.open()
+        
+        let result = try decoder.decode(stream: stream, chunkSize: 16) as! Array<String>
+        
+        XCTAssertEqual(result, expected)
+    }
+    
+    func testStringArrayStreamByElement() throws {
+        
+        let expected = [
+            "a",
+            "aaaaaaaaaaaa",
+            "qpwdokqdpokqwdpoqwdkqpwodkqwpdokqwdpoqwkqpdwokqdwpooqkwdpoqwkd"
+        ]
+        
+        let input = Data([147, 161, 97, 172, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 217, 62, 113, 112, 119, 100, 111, 107, 113, 100, 112, 111, 107, 113, 119, 100, 112, 111, 113, 119, 100, 107, 113, 112, 119, 111, 100, 107, 113, 119, 112, 100, 111, 107, 113, 119, 100, 112, 111, 113, 119, 107, 113, 112, 100, 119, 111, 107, 113, 100, 119, 112, 111, 111, 113, 107, 119, 100, 112, 111, 113, 119, 107, 100])
+        
+        let decoder = Decoder()
+        
+        let stream = InputStream(data: input)
+        
+        stream.open()
+        
+        var result = Array<String>()
+        
+        try decoder.decodeArray(stream: stream, chunkSize: 16) { (value, total, read) in
+            if let stringValue = value as? String {
+                result.append(stringValue)
+            }
+        }
+        
+        XCTAssertEqual(result, expected)
+    }
+    
     static var allTests = [
         ("testNumberArray", testNumberArray),
         ("testStringArray", testStringArray),
         ("testObject", testObject),
-        ("testPerofmance", testPerofmance)
+        ("testPerofmance", testPerofmance),
+        ("testStringArrayStream", testStringArrayStream),
+        ("testStringArrayStreamByElement", testStringArrayStreamByElement)
     ]
 }
