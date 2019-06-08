@@ -425,7 +425,7 @@ public class MessagePackDecoder {
         return try extensionCodec.decode(bytes: data, type: extType)
     }    
     
-    func readHeadByte() throws -> uint8 {
+    func readHeadByte() throws -> UInt8 {
         if self.headByte == nil {
             self.headByte = try self.bufferReader.readU8()
         }

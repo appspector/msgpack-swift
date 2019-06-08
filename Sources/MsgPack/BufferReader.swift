@@ -141,7 +141,7 @@ class BufferReader {
         return number
     }
     
-    func readU8() throws -> uint8 {
+    func readU8() throws -> UInt8 {
         return try readInteger()
     }
     
@@ -149,11 +149,11 @@ class BufferReader {
         return try readInteger()
     }
     
-    func readU32() throws -> uint32 {
+    func readU32() throws -> UInt32 {
         return try readInteger()
     }
     
-    func readU64() throws -> uint64 {
+    func readU64() throws -> UInt64 {
         return try readInteger()
     }
     
