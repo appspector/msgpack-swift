@@ -15,21 +15,25 @@ enum EncodingError : Error {
     case failedToEncodeString(value: String)
 }
 
-class Encoder {
-    private var bufferWriter = BufferWriter()
-    private var extensionCodec = ExtensionCodec()
+public class Encoder {
+    var bufferWriter = BufferWriter()
+    var extensionCodec = ExtensionCodec()
     
-    func getBuffer() -> Data {
+    public init() {}
+    
+    public func getBuffer() -> Data {
         return bufferWriter.getBuffer()
     }
     
-    func encode(value: Any?) throws -> Void {
+    public func encode(value: Any?) throws -> Void {
         if let value = value {
             switch value {
             case let value as String:
                 try encode(string: value)
+            
             case let value as Bool:
                 try encode(bool: value)
+            
             case let value as UInt:
                 try encode(uint: value)
             case let value as UInt8:
@@ -40,6 +44,7 @@ class Encoder {
                 try encode(uint32: value)
             case let value as UInt64:
                 try encode(uint64: value)
+                
             case let value as Int:
                 try encode(int: value)
             case let value as Int8:
@@ -50,10 +55,12 @@ class Encoder {
                 try encode(int32: value)
             case let value as Int64:
                 try encode(int64: value)
+                
             case let value as Float32:
                 try encode(float32: value)
             case let value as Float64:
                 try encode(float64: value)
+                
             case let value as Dictionary<String, Any?>:
                 try encode(map: value)
             case let value as Array<Any?>:
@@ -74,11 +81,11 @@ class Encoder {
         try bufferWriter.write(uint8: 0xc0)
     }
     
-    func encodeNil() throws -> Void {
+    public func encodeNil() throws -> Void {
         try bufferWriter.write(uint8: 0xc0)
     }
     
-    func encode(string: String) throws -> Void {
+    public func encode(string: String) throws -> Void {
         let utf8Count = string.utf8.count
         try encodeStringHeader(size: utf8Count)
                 
@@ -106,7 +113,7 @@ class Encoder {
         }
     }
     
-    func encode(bool: Bool) throws -> Void {
+    public func encode(bool: Bool) throws -> Void {
         if bool {
             try bufferWriter.write(uint8: 0xc3)
         } else {
@@ -116,7 +123,7 @@ class Encoder {
     
     // Uint
     
-    func encode(uint: UInt) throws -> Void {
+    public func encode(uint: UInt) throws -> Void {
         let uintSize = MemoryLayout<UInt>.size
         let uint32Size = MemoryLayout<UInt32>.size
         
@@ -127,7 +134,7 @@ class Encoder {
         }
     }
     
-    func encode(uint8: UInt8) throws -> Void {
+    public func encode(uint8: UInt8) throws -> Void {
         if uint8 < 0x80 {
           try bufferWriter.write(uint8: uint8)
         } else {
@@ -136,24 +143,24 @@ class Encoder {
         }
     }
     
-    func encode(uint16: UInt16) throws -> Void {
+    public func encode(uint16: UInt16) throws -> Void {
         try bufferWriter.write(uint8: 0xcd)
         try bufferWriter.write(uint16: uint16)
     }
     
-    func encode(uint32: UInt32) throws -> Void {
+    public func encode(uint32: UInt32) throws -> Void {
         try bufferWriter.write(uint8: 0xce)
         try bufferWriter.write(uint32: uint32)
     }
     
-    func encode(uint64: UInt64) throws -> Void {
+    public func encode(uint64: UInt64) throws -> Void {
         try bufferWriter.write(uint8: 0xcf)
         try bufferWriter.write(uint64: uint64)
     }
     
     // Int
     
-    func encode(int: Int) throws -> Void {
+    public func encode(int: Int) throws -> Void {
         let intSize = MemoryLayout<Int>.size
         let int32Size = MemoryLayout<Int32>.size
         
@@ -164,7 +171,7 @@ class Encoder {
         }
     }
     
-    func encode(int8: Int8) throws -> Void {
+    public func encode(int8: Int8) throws -> Void {
         if int8 >= 0 {
             try bufferWriter.write(int8: int8)
         } else if int8 >= -0x20 {
@@ -175,29 +182,29 @@ class Encoder {
         }
     }
     
-    func encode(int16: Int16) throws -> Void {
+    public func encode(int16: Int16) throws -> Void {
         try bufferWriter.write(uint8: 0xd1)
         try bufferWriter.write(int16: int16)
     }
     
-    func encode(int32: Int32) throws -> Void {
+    public func encode(int32: Int32) throws -> Void {
         try bufferWriter.write(uint8: 0xd2)
         try bufferWriter.write(int32: int32)
     }
     
-    func encode(int64: Int64) throws -> Void {
+    public func encode(int64: Int64) throws -> Void {
         try bufferWriter.write(uint8: 0xd3)
         try bufferWriter.write(int64: int64)
     }
     
     // Floats
     
-    func encode(float32: Float32) throws -> Void {
+    public func encode(float32: Float32) throws -> Void {
         try bufferWriter.write(uint8: 0xca)
         try bufferWriter.write(float32: float32)
     }
     
-    func encode(float64: Float64) throws -> Void {
+    public func encode(float64: Float64) throws -> Void {
         try bufferWriter.write(uint8: 0xcb)
         try bufferWriter.write(float64: float64)
     }
@@ -218,12 +225,14 @@ class Encoder {
         }
     }
     
-    func encode(map: Dictionary<String, Any?>) throws -> Void {
+    public func encode(map: Dictionary<String, Any?>) throws -> Void {
         try encodeMapHeader(size: map.count)
         
-        for item in map {
-            try encode(string: item.key)
-            try encode(value: item.value)
+        let sortedKeys = map.keys.sorted()
+        
+        for key in sortedKeys {
+            try encode(string: key)
+            try encode(value: map[key] as Any?)
         }
     }
     
@@ -243,7 +252,7 @@ class Encoder {
         }
     }
     
-    func encode(array: Array<Any?>) throws -> Void {
+    public func encode(array: Array<Any?>) throws -> Void {
         try encodeArrayHeader(size: array.count)
         
         for item in array {

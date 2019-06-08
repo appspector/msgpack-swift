@@ -1,7 +1,6 @@
 import XCTest
 import Foundation
-
-@testable import MsgPack
+import MsgPack
 
 final class DecoderTests: XCTestCase {
     func testNumberArray() throws {

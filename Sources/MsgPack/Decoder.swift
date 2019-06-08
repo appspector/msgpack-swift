@@ -40,9 +40,9 @@ class ArrayDecodingState {
 }
 
 let DefaultDecodingStackSize = 16
-let DefaultStreamChunkSize = 4096
+public let DefaultStreamChunkSize = 4096
 
-typealias ArrayDecodingCallback = (_ value: Any?, _ total: Int, _ read: Int) -> Void
+public typealias ArrayDecodingCallback = (_ value: Any?, _ total: Int, _ read: Int) -> Void
 
 public class Decoder {
     var decodingStack = Array<DecodingTask>()
@@ -50,11 +50,11 @@ public class Decoder {
     var bufferReader = BufferReader()
     var extensionCodec = ExtensionCodec()
     
-    init() {
+    public init() {
         self.decodingStack.reserveCapacity(DefaultDecodingStackSize)
     }
     
-    func decodeMultiple(stream: InputStream, chunkSize: Int = DefaultStreamChunkSize, callback: (_ value: Any?) -> Void) throws -> Void {
+    public func decodeMultiple(stream: InputStream, chunkSize: Int = DefaultStreamChunkSize, callback: (_ value: Any?) -> Void) throws -> Void {
         try consume(stream: stream, chunkSize: chunkSize) {
             while true {
                 let result = try decodeOne()
@@ -63,7 +63,7 @@ public class Decoder {
         }
     }
     
-    func decodeOne(stream: InputStream, chunkSize: Int = DefaultStreamChunkSize) throws -> Any? {
+    public func decodeOne(stream: InputStream, chunkSize: Int = DefaultStreamChunkSize) throws -> Any? {
         var result: Any? = nil
         
         try consume(stream: stream, chunkSize: chunkSize) {
@@ -73,7 +73,7 @@ public class Decoder {
         return result
     }
     
-    func decodeArray(stream: InputStream, chunkSize: Int = DefaultStreamChunkSize, callback: ArrayDecodingCallback) throws -> Void {
+    public func decodeArray(stream: InputStream, chunkSize: Int = DefaultStreamChunkSize, callback: ArrayDecodingCallback) throws -> Void {
         var isArrayHeaderParsed = false
         var totalElements = 0
         var read = 0
@@ -114,7 +114,7 @@ public class Decoder {
         stream.close()
     }
     
-    func decode(data: Data) throws -> Any? {
+    public func decode(data: Data) throws -> Any? {
         bufferReader.setBuffer(data)    
         return try decodeOne()
     }

@@ -1,7 +1,6 @@
 import XCTest
 import Foundation
-
-@testable import MsgPack
+import MsgPack
 
 func printData(_ data: Data) -> String {
     var value = "["
@@ -203,8 +202,27 @@ final class EncoderTests: XCTestCase {
         XCTAssertEqual(result, Data([131, 165, 97, 114, 114, 97, 121, 147, 1, 2, 3, 166, 110, 101, 115, 116, 101, 100, 129, 168, 105, 115, 65, 99, 116, 105, 118, 101, 195, 165, 118, 97, 108, 117, 101, 1]))
     }
     
-    func testUnsupportedObjectEncode() throws {        
+    func testUnsupportedObjectEncode() throws {
         XCTAssertThrowsError(try encoder.encode(value: InputStream()))
+    }
+    
+    func testEncodePerformance() throws {
+        
+        let value = [
+            "value" : UInt8(1),
+            "array" : [1,2,3] as Array<UInt8>,
+            "nested" : ["isActive": true]
+        ] as Dictionary<String, Any?>
+        
+        measure {
+            for _ in (0...5000) {
+                do {
+                    let _ = try encoder.encode(value: value)
+                } catch {
+                    
+                }
+            }
+        }
     }
     
     static var allTests = [
