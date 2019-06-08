@@ -1,9 +1,9 @@
-# MsgPack (In development)
+# MessagePack Swift
 
 Ultra fast, zero-dependency MessagePack impelementation in pure swift. Supports Apple platforms and Linux.
 
 Based on original MessagePack parser architecture. This is the only Swift version with streaming parsing support.
-No recursion and very little additional memory allocation.
+No recursion in decoding path and very little additional memory allocation.
 
 This version is still in development
 
@@ -12,7 +12,24 @@ This version is still in development
  - [x] Decoder
  - [x] Stream Decoder Helpers
  - [x] Continious array stream decoder
- - [ ] Encoder
+ - [x] Encoder
+ 
+# Installation
+
+### SPM (Swift Package Manager)
+
+You can easily integrate MessagePack.swift in your app with SPM. Just add MessagePack.swift as a dependency:
+
+```swift
+import PackageDescription
+
+let package = Package(
+    name: "CoolAppName",
+    dependencies: [
+        .Package(url: "https://github.com/appspector/msgpack-swift.git", majorVersion: 0.1),
+    ]
+)
+```
 
 # About Us
 
