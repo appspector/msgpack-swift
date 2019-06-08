@@ -1,4 +1,4 @@
-# MsgPack (In development)
+# MessagePack Swift
 
 Ultra fast, zero-dependency MessagePack impelementation in pure swift. Supports Apple platforms and Linux.
 
