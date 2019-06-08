@@ -13,6 +13,23 @@ This version is still in development
  - [x] Stream Decoder Helpers
  - [x] Continious array stream decoder
  - [x] Encoder
+ 
+# Installation
+
+### SPM (Swift Package Manager)
+
+You can easily integrate MessagePack.swift in your app with SPM. Just add MessagePack.swift as a dependency:
+
+```swift
+import PackageDescription
+
+let package = Package(
+    name: "CoolAppName",
+    dependencies: [
+        .Package(url: "https://github.com/appspector/msgpack-swift.git", majorVersion: 0.1),
+    ]
+)
+```
 
 # About Us
 
