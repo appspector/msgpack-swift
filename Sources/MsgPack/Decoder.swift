@@ -46,7 +46,7 @@ public typealias ArrayDecodingCallback = (_ value: Any?, _ total: Int, _ read: I
 
 public class Decoder {
     var decodingStack = Array<DecodingTask>()
-    var headByte: uint8? = nil;
+    var headByte: UInt8? = nil;
     var bufferReader = BufferReader()
     var extensionCodec = ExtensionCodec()
     
