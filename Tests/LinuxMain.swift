@@ -3,5 +3,6 @@ import XCTest
 import MsgPackTests
 
 var tests = [XCTestCaseEntry]()
-tests += MsgPackTests.allTests()
+tests += DecoderTests.allTests()
+tests += EncoderTests.allTests()
 XCTMain(tests)

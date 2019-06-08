@@ -54,7 +54,16 @@ public class Decoder {
         self.decodingStack.reserveCapacity(DefaultDecodingStackSize)
     }
     
-    func decode(stream: InputStream, chunkSize: Int = DefaultStreamChunkSize) throws -> Any? {
+    func decodeMultiple(stream: InputStream, chunkSize: Int = DefaultStreamChunkSize, callback: (_ value: Any?) -> Void) throws -> Void {
+        try consume(stream: stream, chunkSize: chunkSize) {
+            while true {
+                let result = try decodeOne()
+                callback(result)
+            }
+        }
+    }
+    
+    func decodeOne(stream: InputStream, chunkSize: Int = DefaultStreamChunkSize) throws -> Any? {
         var result: Any? = nil
         
         try consume(stream: stream, chunkSize: chunkSize) {

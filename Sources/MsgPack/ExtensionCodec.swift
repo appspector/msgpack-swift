@@ -11,4 +11,8 @@ class ExtensionCodec {
     func decode(bytes: Data, type: Int8) throws -> Any? {
         return nil
     }
+    
+    func encode(value: Any?) throws -> Any? {
+        return nil
+    }
 }

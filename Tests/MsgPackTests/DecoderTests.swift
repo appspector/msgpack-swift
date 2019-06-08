@@ -3,7 +3,7 @@ import Foundation
 
 @testable import MsgPack
 
-final class MsgPackTests: XCTestCase {
+final class DecoderTests: XCTestCase {
     func testNumberArray() throws {
         
         let expected = [
@@ -109,7 +109,7 @@ final class MsgPackTests: XCTestCase {
         
         stream.open()
         
-        let result = try decoder.decode(stream: stream, chunkSize: 16) as! Array<String>
+        let result = try decoder.decodeOne(stream: stream, chunkSize: 16) as! Array<String>
         
         XCTAssertEqual(result, expected)
     }
