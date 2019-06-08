@@ -3,7 +3,7 @@
 Ultra fast, zero-dependency MessagePack impelementation in pure swift. Supports Apple platforms and Linux.
 
 Based on original MessagePack parser architecture. This is the only Swift version with streaming parsing support.
-No recursion and very little additional memory allocation.
+No recursion in decoding path and very little additional memory allocation.
 
 This version is still in development
 
