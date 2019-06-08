@@ -1,6 +1,6 @@
 import Foundation
 
-enum MsgPackDecodingError : Error {
+public enum MessagePackDecodingError : Error {
     case insufficientData
     case invalidMapKey(value: Any?)
     case missingMapKey
@@ -44,7 +44,7 @@ public let DefaultStreamChunkSize = 4096
 
 public typealias ArrayDecodingCallback = (_ value: Any?, _ total: Int, _ read: Int) -> Void
 
-public class Decoder {
+public class MessagePackDecoder {
     var decodingStack = Array<DecodingTask>()
     var headByte: UInt8? = nil;
     var bufferReader = BufferReader()
@@ -103,7 +103,7 @@ public class Decoder {
             
             do {
                 try callback()
-            } catch MsgPackDecodingError.insufficientData {
+            } catch MessagePackDecodingError.insufficientData {
                 // Do nothing
             } catch {
                 throw error
@@ -324,7 +324,7 @@ public class Decoder {
                     object = try decodeExtension(Int(size), 4)
                     break;
                 default:
-                    throw MsgPackDecodingError.unrecognizedType(type: headByte)
+                    throw MessagePackDecodingError.unrecognizedType(type: headByte)
                 }
             }
             
@@ -354,7 +354,7 @@ public class Decoder {
                             state.isParsingKey = false
                             continue DECODING
                         } else {
-                            throw MsgPackDecodingError.invalidMapKey(value: object)
+                            throw MessagePackDecodingError.invalidMapKey(value: object)
                         }
                     } else {
                         if let key = state.key {
@@ -370,12 +370,12 @@ public class Decoder {
                                 continue DECODING
                             }
                         } else {
-                            throw MsgPackDecodingError.missingMapKey
+                            throw MessagePackDecodingError.missingMapKey
                         }
                     }
                     break
                 case .none:
-                    throw MsgPackDecodingError.invalidDecodingTask
+                    throw MessagePackDecodingError.invalidDecodingTask
                 }
             }
             
@@ -414,7 +414,7 @@ public class Decoder {
             if headByte < 0xa0 {
                 return Int(headByte - 0x90)
             } else {
-                throw MsgPackDecodingError.invalidArrayHeaderType(type: headByte)
+                throw MessagePackDecodingError.invalidArrayHeaderType(type: headByte)
             }
         }
     }

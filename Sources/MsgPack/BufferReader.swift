@@ -21,7 +21,7 @@ class BufferReader {
     
     func hasRemaining(_ size: Int) throws {
         if position + size > buffer.count {
-            throw MsgPackDecodingError.insufficientData
+            throw MessagePackDecodingError.insufficientData
         }
     }
     
@@ -80,7 +80,7 @@ class BufferReader {
             if let string = string {
                 return string
             } else {
-                throw MsgPackDecodingError.failedToDecodeString
+                throw MessagePackDecodingError.failedToDecodeString
             }
         }
         

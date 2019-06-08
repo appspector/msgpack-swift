@@ -18,10 +18,10 @@ func printData(_ data: Data) -> String {
 
 final class EncoderTests: XCTestCase {
     
-    var encoder = Encoder()
+    var encoder = MessagePackEncoder()
     
     override func setUp() {
-        encoder = Encoder()
+        encoder = MessagePackEncoder()
     }
     
     func testNilEncode() throws {

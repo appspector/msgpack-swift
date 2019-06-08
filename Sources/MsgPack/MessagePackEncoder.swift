@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum EncodingError : Error {
+public enum MessagePackEncodingError : Error {
     case unsupportedValue(value: Any?)
     case stringIsTooLong(value: Int)
     case arrayIsTooLong(value: Int)
@@ -15,7 +15,7 @@ enum EncodingError : Error {
     case failedToEncodeString(value: String)
 }
 
-public class Encoder {
+public class MessagePackEncoder {
     var bufferWriter = BufferWriter()
     var extensionCodec = ExtensionCodec()
     
@@ -69,7 +69,7 @@ public class Encoder {
                 if let ext = try extensionCodec.encode(value: value) {
                     try encode(ext: ext)
                 } else {
-                    throw EncodingError.unsupportedValue(value: value)
+                    throw MessagePackEncodingError.unsupportedValue(value: value)
                 }
             }
         } else {
@@ -92,7 +92,7 @@ public class Encoder {
         if let stringData = string.data(using: .utf8) {
             try bufferWriter.writeRaw(data: stringData)
         } else {
-            throw EncodingError.failedToEncodeString(value: string)
+            throw MessagePackEncodingError.failedToEncodeString(value: string)
         }
     }
     
@@ -109,7 +109,7 @@ public class Encoder {
             try bufferWriter.write(uint8: 0xdb)
             try bufferWriter.write(uint32: UInt32(size))
         } else {
-            throw EncodingError.stringIsTooLong(value: size)
+            throw MessagePackEncodingError.stringIsTooLong(value: size)
         }
     }
     
@@ -221,7 +221,7 @@ public class Encoder {
             try bufferWriter.write(uint8: 0xdf)
             try bufferWriter.write(uint32: UInt32(size))
         } else {
-            throw EncodingError.mapIsTooLong(value: size)
+            throw MessagePackEncodingError.mapIsTooLong(value: size)
         }
     }
     
@@ -248,7 +248,7 @@ public class Encoder {
             try bufferWriter.write(uint8: 0xdd)
             try bufferWriter.write(uint32: UInt32(size))
         } else {
-            throw EncodingError.arrayIsTooLong(value: size)
+            throw MessagePackEncodingError.arrayIsTooLong(value: size)
         }
     }
     
