@@ -10,8 +10,8 @@ This version is still in development
 # Progress
 
  - [x] Decoder
- - [ ] Stream Decoder Helpers
- - [ ] Continious array stream decoder
+ - [x] Stream Decoder Helpers
+ - [x] Continious array stream decoder
  - [ ] Encoder
 
 # About Us
