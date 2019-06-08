@@ -221,11 +221,9 @@ class Encoder {
     func encode(map: Dictionary<String, Any?>) throws -> Void {
         try encodeMapHeader(size: map.count)
         
-        let sortedKeys = map.keys.sorted()        
-        
-        for key in sortedKeys {
-            try encode(string: key)
-            try encode(value: map[key] as Any?)
+        for item in map {
+            try encode(string: item.key)
+            try encode(value: item.value)
         }
     }
     
