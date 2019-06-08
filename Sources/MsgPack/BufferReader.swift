@@ -13,6 +13,7 @@ class BufferReader {
     
     func setBuffer(_ data: Data) {
         self.buffer = data
+        self.position = 0
     }
     
     func append(data: Data) {
