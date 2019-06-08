@@ -15,10 +15,6 @@ Supports Apple platforms and Linux.
 Based on original MessagePack parser architecture. This is the only Swift version with streaming parsing support.
 Using this library you can parse endless streams of msgpack data without consuming all memory on your machine.
 
-# Performance
-
-
-
 # Installation
 
 ### SPM (Swift Package Manager)
